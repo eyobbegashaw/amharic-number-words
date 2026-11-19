@@ -1,0 +1,72 @@
+{
+  "name": "amharic-number-words",
+  "version": "1.0.0",
+  "description": "Enterprise-grade, linguistically accurate number-to-words converter for Amharic (ፊደል). Perfect for Ethiopian financial systems, banking, invoicing, receipts, and cheque-writing.",
+  "keywords": [
+    "amharic",
+    "ethiopia",
+    "numbers",
+    "number-to-words",
+    "words",
+    "currency",
+    "etb",
+    "birr",
+    "cheque",
+    "invoice",
+    "receipt",
+    "fidel",
+    "amharic-words",
+    "ethiopian-birr",
+    "amharic-numbers"
+  ],
+  "author": "Antigravity Engineering",
+  "license": "MIT",
+  "homepage": "https://github.com/AI-based-Personal-Assistant/amharic-number-words#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AI-based-Personal-Assistant/amharic-number-words.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AI-based-Personal-Assistant/amharic-number-words/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "demo": "node demo/server.js",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "@vitest/coverage-v8": "^3.2.7",
+    "tsup": "^8.3.6",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
