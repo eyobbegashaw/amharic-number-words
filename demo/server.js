@@ -16,7 +16,7 @@ const MIME_TYPES = {
 };
 
 const server = http.createServer((req, res) => {
-  const urlPath = req.url === "/" ? "/demo/index.html" : req.url.split("?")[0];
+  const urlPath = req.url === "/" ? "/public/index.html" : req.url.split("?")[0];
   const filePath = path.join(rootDir, urlPath);
 
   // Prevent directory traversal

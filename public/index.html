@@ -1,309 +1,1101 @@
 <!DOCTYPE html>
-<html lang="am">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>amharic-number-words — Amharic Number & Currency Converter</title>
+  <title>amharic-number-words — Enterprise Amharic Number & Currency Converter</title>
   <meta name="description" content="Production-ready Amharic number-to-words converter for Ethiopian financial systems, banking, invoicing, receipts, and cheques.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --primary: #106b4e;
-      --primary-hover: #0a4f38;
       --bg: #f8fafc;
       --card-bg: #ffffff;
-      --text: #1e293b;
+      --card-subtle: #f1f5f9;
+      --text: #0f172a;
       --text-muted: #64748b;
       --border: #e2e8f0;
-      --accent: #f1f5f9;
-      --success: #15803d;
+      --border-focus: #106b4e;
+      
+      --primary: #106b4e;
+      --primary-hover: #0a4f38;
+      --primary-light: #e6f4ea;
+      --primary-glow: rgba(16, 107, 78, 0.15);
+
+      --gold: #d97706;
+      --gold-bg: #fef3c7;
+      
+      --cheque-bg: #f8fafc;
+      --cheque-border: #cbd5e1;
+      
+      --success: #16a34a;
+      --error-bg: #fef2f2;
+      --error-border: #fecaca;
+      --error-text: #dc2626;
+
+      --code-bg: #0f172a;
+      --code-text: #f8fafc;
+
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+
+      --font-sans: 'Inter', 'Noto Sans Ethiopic', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg: #090d16;
+      --card-bg: #111827;
+      --card-subtle: #1f2937;
+      --text: #f9fafb;
+      --text-muted: #9ca3af;
+      --border: #374151;
+      --border-focus: #34d399;
+
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --primary-light: rgba(16, 185, 129, 0.15);
+      --primary-glow: rgba(16, 185, 129, 0.25);
+
+      --gold: #fbbf24;
+      --gold-bg: rgba(251, 191, 36, 0.1);
+
+      --cheque-bg: #1a2234;
+      --cheque-border: #334155;
+
+      --error-bg: #450a0a;
+      --error-border: #991b1b;
+      --error-text: #f87171;
+
+      --code-bg: #030712;
+      --code-text: #e5e7eb;
+
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Nyala", "Abyssinica SIL", "Kefa", sans-serif;
+      font-family: var(--font-sans);
       background-color: var(--bg);
       color: var(--text);
-      line-height: 1.5;
-      padding: 32px 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    .container {
-      max-width: 720px;
-      margin: 0 auto;
-      background: var(--card-bg);
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
-      border: 1px solid var(--border);
-    }
-
-    header {
-      margin-bottom: 24px;
+    /* Top Navbar */
+    .navbar {
       border-bottom: 1px solid var(--border);
-      padding-bottom: 16px;
+      background: var(--card-bg);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
     }
 
-    h1 {
-      font-size: 1.75rem;
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--primary) 0%, #047857 100%);
+      color: #fff;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 10px var(--primary-glow);
+    }
+
+    .brand-text h1 {
+      font-size: 1.15rem;
       font-weight: 700;
-      color: var(--primary);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .brand-text span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .nav-actions {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .subtitle {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      margin-top: 4px;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
+    .btn-icon {
+      background: var(--card-subtle);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
       font-weight: 600;
-      font-size: 0.9rem;
-      margin-bottom: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
     }
 
-    input[type="text"] {
+    .btn-icon:hover {
+      background: var(--border);
+    }
+
+    /* Main Layout */
+    .main-container {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 0 20px 48px;
       width: 100%;
-      padding: 12px 16px;
-      font-size: 1.25rem;
+      flex: 1;
+    }
+
+    /* Grid layout */
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 900px) {
+      .grid-container {
+        grid-template-columns: 1.2fr 0.8fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+
+    .card-header {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-badge {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    /* Input Field */
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .input-wrapper label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .amount-input-box {
+      position: relative;
+    }
+
+    .amount-input {
+      width: 100%;
+      padding: 14px 44px 14px 16px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      background: var(--card-bg);
+      color: var(--text);
       border: 2px solid var(--border);
-      border-radius: 10px;
+      border-radius: var(--radius-md);
       outline: none;
-      transition: border-color 0.2s;
-      font-family: inherit;
+      box-shadow: var(--shadow-sm);
     }
 
-    input[type="text"]:focus {
-      border-color: var(--primary);
+    .amount-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--primary-glow);
     }
 
-    .presets {
+    .input-clear {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--border);
+      border: none;
+      width: 26px;
+      height: 26px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .input-clear:hover {
+      background: var(--text-muted);
+      color: #fff;
+    }
+
+    /* Presets */
+    .presets-bar {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
+      gap: 6px;
+      margin-bottom: 24px;
     }
 
-    .preset-btn {
-      background: var(--accent);
+    .preset-chip {
+      background: var(--card-subtle);
       border: 1px solid var(--border);
       padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.825rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.785rem;
+      font-weight: 500;
       cursor: pointer;
-      font-family: inherit;
       color: var(--text);
-      transition: background 0.15s;
+      font-family: var(--font-mono);
     }
 
-    .preset-btn:hover {
-      background: #e2e8f0;
+    .preset-chip:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
     }
 
-    .mode-tabs {
+    /* Mode Selector Tabs */
+    .mode-nav {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
       gap: 8px;
       margin-bottom: 24px;
+      background: var(--card-subtle);
+      padding: 6px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
     }
 
-    .mode-btn {
-      padding: 10px 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: #ffffff;
-      font-size: 0.875rem;
+    .mode-tab {
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
-      text-align: center;
-      transition: all 0.15s;
-      color: var(--text-muted);
-    }
-
-    .mode-btn.active {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #ffffff;
-    }
-
-    .options-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      background: var(--accent);
-      padding: 14px;
-      border-radius: 10px;
-      margin-bottom: 24px;
-      font-size: 0.85rem;
-    }
-
-    .options-grid select {
-      width: 100%;
-      padding: 6px 8px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
       font-family: inherit;
     }
 
-    .result-box {
-      background: #f0fdf4;
-      border: 2px solid #bbf7d0;
-      border-radius: 12px;
-      padding: 20px;
+    .mode-tab.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Output Card */
+    .output-card {
+      background: var(--primary-light);
+      border: 2px solid var(--primary);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 24px;
       position: relative;
     }
 
-    .result-box.error {
-      background: #fef2f2;
-      border-color: #fecaca;
+    .output-card.error {
+      background: var(--error-bg);
+      border-color: var(--error-border);
     }
 
-    .result-header {
+    .output-meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
-    .result-title {
-      font-size: 0.825rem;
+    .output-label {
+      font-size: 0.8rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--primary);
     }
 
-    .result-box.error .result-title {
-      color: #dc2626;
+    .output-card.error .output-label {
+      color: var(--error-text);
     }
 
-    .copy-btn {
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      padding: 4px 12px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .copy-btn:hover {
-      background: #f8fafc;
-    }
-
-    .result-text {
-      font-size: 1.5rem;
+    .copy-pill {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.785rem;
       font-weight: 600;
-      color: #064e3b;
-      line-height: 1.4;
-      word-break: break-word;
+      cursor: pointer;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
     }
 
-    .result-box.error .result-text {
+    .copy-pill:hover {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .output-text {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.45;
+      word-break: break-word;
+      font-feature-settings: "kern" 1;
+    }
+
+    .output-card.error .output-text {
       font-size: 1.1rem;
-      color: #b91c1c;
+      color: var(--error-text);
       font-weight: 500;
     }
 
-    footer {
+    /* Breakdown tags */
+    .breakdown-row {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(16, 185, 129, 0.3);
+    }
+
+    .breakdown-tag {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* Visual Simulation Cards */
+    .simulation-section {
       margin-top: 24px;
+    }
+
+    /* Cheque design */
+    .cheque-card {
+      background: var(--cheque-bg);
+      border: 2px dashed var(--cheque-border);
+      border-radius: var(--radius-md);
+      padding: 24px 28px;
+      position: relative;
+      box-shadow: var(--shadow-sm);
+      font-family: var(--font-sans);
+    }
+
+    .cheque-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .cheque-bank-title {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .cheque-bank-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .cheque-date-box {
+      border-bottom: 1px solid var(--text-muted);
+      padding: 2px 8px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .cheque-line {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+
+    .cheque-line-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .cheque-line-fill {
+      flex: 1;
+      border-bottom: 1px dotted var(--text-muted);
+      padding-bottom: 2px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .cheque-amount-box {
+      background: var(--card-bg);
+      border: 2px solid var(--primary);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 800;
+      white-space: nowrap;
+      color: var(--primary);
+    }
+
+    .cheque-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 24px;
+      padding-top: 12px;
+    }
+
+    .cheque-micr {
+      font-family: var(--font-mono);
+      letter-spacing: 0.25em;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .cheque-signature {
+      border-top: 1px solid var(--text-muted);
+      width: 160px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      padding-top: 4px;
+    }
+
+    /* Receipt design */
+    .receipt-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      max-width: 380px;
+      margin: 0 auto;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+
+    .receipt-header {
+      text-align: center;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+
+    .receipt-title {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+
+    .receipt-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+    }
+
+    .receipt-total {
+      border-top: 2px solid var(--text);
+      border-bottom: 2px solid var(--text);
+      padding: 8px 0;
+      margin: 12px 0;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 800;
+      font-size: 1.15rem;
+    }
+
+    .receipt-words {
+      background: var(--card-subtle);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* Options Panel (Right Column) */
+    .options-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .option-group {
+      margin-bottom: 18px;
+    }
+
+    .option-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .option-group select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--card-bg);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+    }
+
+    .option-group select:focus {
+      border-color: var(--border-focus);
+      outline: none;
+    }
+
+    /* Live Code Snippet Box */
+    .code-card {
+      margin-top: 24px;
+      background: var(--code-bg);
+      color: var(--code-text);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .code-header {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .code-title {
+      font-size: 0.785rem;
+      font-weight: 600;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .code-tabs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .code-tab-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .code-tab-btn.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    pre code {
+      display: block;
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 0.825rem;
+      overflow-x: auto;
+      line-height: 1.6;
+    }
+
+    /* Guide Section */
+    .guide-section {
+      margin-top: 36px;
+      padding-top: 36px;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-heading {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .section-sub {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .feature-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+    }
+
+    .feature-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .feature-desc {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 10px 18px;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--card-bg);
+      padding: 24px 20px;
       text-align: center;
       font-size: 0.85rem;
       color: var(--text-muted);
     }
-    
+
     footer a {
       color: var(--primary);
       text-decoration: none;
+      font-weight: 600;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>amharic-number-words</h1>
-      <p class="subtitle">Convert any number into natural, grammatically correct Amharic words (ፊደል)</p>
-    </header>
+  <!-- Navigation Header -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#" class="brand">
+        <div class="brand-icon">ፊ</div>
+        <div class="brand-text">
+          <h1>amharic-number-words</h1>
+          <span data-i18n="tagline">Enterprise Amharic Number & Currency Engine</span>
+        </div>
+      </a>
 
-    <div class="form-group">
-      <label for="numInput">ቁጥር ያስገቡ (Enter Amount or Number):</label>
-      <input type="text" id="numInput" value="1500.50" placeholder="e.g. 1500.50, 2500000, -45" autocomplete="off" autofocus />
+      <div class="nav-actions">
+        <!-- Language Switcher -->
+        <button class="btn-icon" id="langToggle" title="Switch Language">
+          <span id="langFlag">🇪🇹</span>
+          <span id="langLabel">አማርኛ</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button class="btn-icon" id="themeToggle" title="Toggle Dark/Light Mode">
+          <span id="themeIcon">🌙</span>
+        </button>
+
+        <!-- GitHub Link -->
+        <a href="https://github.com/AI-based-Personal-Assistant/amharic-number-words" target="_blank" rel="noopener" class="btn-icon">
+          <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <div class="grid-container">
       
-      <div class="presets">
-        <span style="font-size: 0.8rem; color: var(--text-muted); align-self: center;">ምሳሌዎች (Presets):</span>
-        <button class="preset-btn" data-val="0">0</button>
-        <button class="preset-btn" data-val="15">15</button>
-        <button class="preset-btn" data-val="100">100</button>
-        <button class="preset-btn" data-val="101">101</button>
-        <button class="preset-btn" data-val="1500.50">1,500.50</button>
-        <button class="preset-btn" data-val="2500000">2,500,000</button>
-        <button class="preset-btn" data-val="1000000000">1,000,000,000</button>
-        <button class="preset-btn" data-val="-45.75">-45.75</button>
-      </div>
+      <!-- Left Column: Converter Playground -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span data-i18n="playgroundTitle">Live Converter Playground</span>
+            <span class="card-badge">v1.0.0</span>
+          </div>
+        </div>
+
+        <!-- Input Box -->
+        <div class="input-wrapper">
+          <label for="amountInput" data-i18n="inputLabel">Enter Numeric Amount or Value:</label>
+          <div class="amount-input-box">
+            <input
+              type="text"
+              id="amountInput"
+              class="amount-input"
+              value="1500.50"
+              placeholder="e.g. 1500.50"
+              autocomplete="off"
+              autofocus
+            />
+            <button class="input-clear" id="clearBtn" title="Clear input">✕</button>
+          </div>
+        </div>
+
+        <!-- Presets -->
+        <div class="presets-bar">
+          <span style="font-size: 0.785rem; color: var(--text-muted); align-self: center;" data-i18n="presetsLabel">Presets:</span>
+          <button class="preset-chip" data-val="0">0</button>
+          <button class="preset-chip" data-val="15">15</button>
+          <button class="preset-chip" data-val="100">100</button>
+          <button class="preset-chip" data-val="101">101</button>
+          <button class="preset-chip" data-val="1500.50">1,500.50</button>
+          <button class="preset-chip" data-val="25000">25,000</button>
+          <button class="preset-chip" data-val="2500000">2.5M</button>
+          <button class="preset-chip" data-val="1000000000">1 Billion</button>
+          <button class="preset-chip" data-val="-45.75">-45.75</button>
+        </div>
+
+        <!-- Mode Selector -->
+        <div class="mode-nav">
+          <button class="mode-tab active" data-mode="currency">
+            <span>🇪🇹</span>
+            <span data-i18n="modeETB">ETB (ብር)</span>
+          </button>
+          <button class="mode-tab" data-mode="cheque">
+            <span>🖋️</span>
+            <span data-i18n="modeCheque">Cheque (ቼክ)</span>
+          </button>
+          <button class="mode-tab" data-mode="plain">
+            <span>🔢</span>
+            <span data-i18n="modePlain">Number (ቁጥር)</span>
+          </button>
+          <button class="mode-tab" data-mode="receipt">
+            <span>🧾</span>
+            <span data-i18n="modeReceipt">Receipt (ደረሰኝ)</span>
+          </button>
+          <button class="mode-tab" data-mode="invoice">
+            <span>📑</span>
+            <span data-i18n="modeInvoice">Invoice (ድምር)</span>
+          </button>
+          <button class="mode-tab" data-mode="usd">
+            <span>💵</span>
+            <span>USD ($)</span>
+          </button>
+        </div>
+
+        <!-- Primary Output Display -->
+        <div class="output-card" id="outputCard">
+          <div class="output-meta">
+            <span class="output-label" id="outputLabel" data-i18n="resultLabel">Amharic Words (በፊደል)</span>
+            <button class="copy-pill" id="copyResultBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span id="copyBtnText" data-i18n="copyText">Copy</span>
+            </button>
+          </div>
+          <div class="output-text" id="resultText">...</div>
+          
+          <div class="breakdown-row" id="breakdownRow">
+            <!-- Dynamic tags appear here -->
+          </div>
+        </div>
+
+        <!-- Visual Simulations (Cheque / Receipt) -->
+        <div class="simulation-section">
+          <!-- Bank Cheque Preview -->
+          <div class="cheque-card" id="chequePreview" style="display: none;">
+            <div class="cheque-top">
+              <div>
+                <div class="cheque-bank-title">COMMERCIAL BANK OF ETHIOPIA</div>
+                <div class="cheque-bank-sub">የኢትዮጵያ ንግድ ባንክ — Addis Ababa Main Branch</div>
+              </div>
+              <div class="cheque-date-box" id="chequeDate">DATE: 2026-11-19</div>
+            </div>
+
+            <div class="cheque-line">
+              <span class="cheque-line-label">PAY TO THE ORDER OF / ለ፡</span>
+              <span class="cheque-line-fill">SAMPLE BENEFICIARY / አቶ አበበ በቀለ</span>
+              <div class="cheque-amount-box" id="chequeFigures">ETB 1,500.50</div>
+            </div>
+
+            <div class="cheque-line">
+              <span class="cheque-line-label">AMOUNT IN WORDS / የብር መጠን፡</span>
+              <span class="cheque-line-fill" id="chequeWordsText" style="color: var(--primary);">አንድ ሺህ አምስት መቶ ብር ከሃምሳ ሳንቲም ብቻ</span>
+            </div>
+
+            <div class="cheque-footer">
+              <div class="cheque-micr">⑈ 012485 ⑈ 0123456789 ⑈ 987654321 ⑈</div>
+              <div class="cheque-signature">AUTHORIZED SIGNATURE</div>
+            </div>
+          </div>
+
+          <!-- POS Receipt Preview -->
+          <div class="receipt-card" id="receiptPreview" style="display: none;">
+            <div class="receipt-header">
+              <div class="receipt-title">ETHIOPIAN RETAIL POS</div>
+              <div class="receipt-sub">Bole Sub-City, Addis Ababa | TIN: 0012345678</div>
+            </div>
+            <div class="receipt-row">
+              <span>Standard Consultation</span>
+              <span id="receiptItemVal">1,500.50</span>
+            </div>
+            <div class="receipt-total">
+              <span>TOTAL (ጠቅላላ ድምር)</span>
+              <span id="receiptTotalVal">ETB 1,500.50</span>
+            </div>
+            <div class="receipt-words" id="receiptWordsText">
+              የተከፈለ መጠን፡ አንድ ሺህ አምስት መቶ ብር ከሃምሳ ሳንቲም
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Right Column: Settings & Live Code Generator -->
+      <aside>
+        <!-- Linguistic Settings -->
+        <div class="options-card">
+          <div class="card-title" style="margin-bottom: 18px;">
+            <span data-i18n="optionsTitle">Linguistic & Format Rules</span>
+          </div>
+
+          <div class="option-group">
+            <label for="sostSelect" data-i18n="sostLabel">Number 3 Spelling (የቁጥር 3 አጻጻፍ):</label>
+            <select id="sostSelect">
+              <option value="ሦስት" selected>ሦስት (Traditional / Standard)</option>
+              <option value="ሶስት">ሶስት (Modern / Simplified)</option>
+            </select>
+          </div>
+
+          <div class="option-group">
+            <label for="hundredSelect" data-i18n="hundredLabel">100 Prefix (የ 100 አጻጻፍ):</label>
+            <select id="hundredSelect">
+              <option value="true" selected>አንድ መቶ (Standard Banking / Anti-fraud)</option>
+              <option value="false">መቶ (Casual / Short form)</option>
+            </select>
+          </div>
+
+          <div class="option-group">
+            <label for="decimalModeSelect" data-i18n="decimalModeLabel">Decimal Interpretation (የነጥብ አቀራረብ):</label>
+            <select id="decimalModeSelect">
+              <option value="digits" selected>Digits (አሃዝ በአሃዝ — ሰባት አምስት)</option>
+              <option value="number">Number (ሙሉ ቁጥር — ሰባ አምስት)</option>
+            </select>
+          </div>
+
+          <div class="option-group">
+            <label for="chequeFractionSelect" data-i18n="chequeFractionLabel">Cheque Santim Format (የቼክ ሳንቲም):</label>
+            <select id="chequeFractionSelect">
+              <option value="words" selected>Words (በፊደል — ከሃምሳ ሳንቲም)</option>
+              <option value="fraction">Fraction (በክፍልፋይ — ከ 50/100 ሳንቲም)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Live Code Generator -->
+        <div class="code-card">
+          <div class="code-header">
+            <span class="code-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+              <span data-i18n="codeTitle">Copy Code for your App</span>
+            </span>
+            <div class="code-tabs">
+              <button class="code-tab-btn active" data-tab="ts">TS/ESM</button>
+              <button class="code-tab-btn" data-tab="cjs">CommonJS</button>
+            </div>
+          </div>
+          <pre><code id="codeSnippet">// Live snippet generated here...</code></pre>
+        </div>
+
+      </aside>
+
     </div>
 
-    <label>የአቀራረብ አይነት (Display Mode):</label>
-    <div class="mode-tabs">
-      <button class="mode-btn active" data-mode="currency">የኢትዮጵያ ብር (ETB)</button>
-      <button class="mode-btn" data-mode="cheque">የባንክ ቼክ (Cheque)</button>
-      <button class="mode-btn" data-mode="plain">ቁጥር ብቻ (Plain)</button>
-      <button class="mode-btn" data-mode="receipt">የሽያጭ ደረሰኝ (Receipt)</button>
-      <button class="mode-btn" data-mode="invoice">ጠቅላላ ድምር (Invoice)</button>
-      <button class="mode-btn" data-mode="usd">ዶላር (USD)</button>
-    </div>
+    <!-- How to Use Package Guide -->
+    <section class="guide-section">
+      <h2 class="section-heading" data-i18n="guideHeading">How to Use `amharic-number-words` in Your Project</h2>
+      <p class="section-sub" data-i18n="guideSub">
+        Install the zero-dependency npm package and integrate with pure TypeScript, Node.js, Next.js, or React.
+      </p>
 
-    <div class="options-grid">
-      <div>
-        <label for="sostSelect">የቁጥር 3 አጻጻፍ:</label>
-        <select id="sostSelect">
-          <option value="ሦስት" selected>ሦስት (ባህላዊ / Formal)</option>
-          <option value="ሶስት">ሶስት (ዘመናዊ / Modern)</option>
-        </select>
+      <div class="features-grid">
+        <div class="feature-box">
+          <div class="feature-icon">📦</div>
+          <div class="feature-title" data-i18n="feat1Title">Zero Dependencies</div>
+          <div class="feature-desc" data-i18n="feat1Desc">Ultra lightweight runtime. Built on pure modern ECMAScript with tiny footprint.</div>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon">🛡️</div>
+          <div class="feature-title" data-i18n="feat2Title">Financial Precision</div>
+          <div class="feature-desc" data-i18n="feat2Desc">Safe arbitrary-precision decimal decomposition. Zero floating-point rounding errors.</div>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon">🏛️</div>
+          <div class="feature-title" data-i18n="feat3Title">Banking & Cheque Ready</div>
+          <div class="feature-desc" data-i18n="feat3Desc">Compliant with Ethiopian banking cheque fraud prevention rules and VAT invoice formats.</div>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-title" data-i18n="feat4Title">Strict TypeScript</div>
+          <div class="feature-desc" data-i18n="feat4Desc">First-class type declarations, JSDoc comments, dual ESM and CommonJS bundle exports.</div>
+        </div>
       </div>
 
-      <div>
-        <label for="leadingHundred">የ 100 አጻጻፍ:</label>
-        <select id="leadingHundred">
-          <option value="true" selected>አንድ መቶ (Standard)</option>
-          <option value="false">መቶ (Short)</option>
-        </select>
+      <!-- Installation block -->
+      <div class="code-card" style="margin-top: 16px;">
+        <div class="code-header">
+          <span class="code-title">Terminal Installation</span>
+          <span style="font-size: 0.75rem; color: #94a3b8;">npm / pnpm / yarn / bun</span>
+        </div>
+        <pre><code>npm install amharic-number-words</code></pre>
       </div>
+    </section>
+  </main>
 
-      <div>
-        <label for="decimalMode">የነጥብ አቀራረብ:</label>
-        <select id="decimalMode">
-          <option value="digits" selected>አሃዝ በአሃዝ (Digits)</option>
-          <option value="number">ሙሉ ቁጥር (Number)</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="result-box" id="resultCard">
-      <div class="result-header">
-        <span class="result-title" id="resultLabel">በአማርኛ ፊደል (In Amharic Words)</span>
-        <button class="copy-btn" id="copyBtn">ቅዳ (Copy)</button>
-      </div>
-      <div class="result-text" id="resultOutput">...</div>
-    </div>
-
-    <footer>
-      Powered by <strong>amharic-number-words</strong> — Enterprise TypeScript Amharic Number Engine
-    </footer>
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <span>✓</span>
+    <span id="toastMessage">Copied to clipboard!</span>
   </div>
 
+  <!-- Footer -->
+  <footer>
+    <p>
+      <strong>amharic-number-words</strong> — MIT Licensed. Developed for Ethiopian Financial & Software Engineering Excellence.
+    </p>
+  </footer>
+
+  <!-- Application Logic -->
   <script type="module">
     import {
       numberToAmharicWords,
@@ -313,37 +1105,231 @@
       isSupportedNumber
     } from "./index.js";
 
-    const numInput = document.getElementById("numInput");
-    const resultOutput = document.getElementById("resultOutput");
-    const resultCard = document.getElementById("resultCard");
-    const copyBtn = document.getElementById("copyBtn");
-    const sostSelect = document.getElementById("sostSelect");
-    const leadingHundred = document.getElementById("leadingHundred");
-    const decimalMode = document.getElementById("decimalMode");
-
+    // State
+    let currentLang = localStorage.getItem("demo_lang") || "en";
+    let currentTheme = localStorage.getItem("demo_theme") || "light";
     let currentMode = "currency";
+    let currentCodeTab = "ts";
 
-    function update() {
-      const val = numInput.value.trim();
+    // Elements
+    const htmlElem = document.documentElement;
+    const themeToggle = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+    const langToggle = document.getElementById("langToggle");
+    const langFlag = document.getElementById("langFlag");
+    const langLabel = document.getElementById("langLabel");
+
+    const amountInput = document.getElementById("amountInput");
+    const clearBtn = document.getElementById("clearBtn");
+    const resultText = document.getElementById("resultText");
+    const outputCard = document.getElementById("outputCard");
+    const breakdownRow = document.getElementById("breakdownRow");
+    const copyResultBtn = document.getElementById("copyResultBtn");
+    const codeSnippet = document.getElementById("codeSnippet");
+    const toast = document.getElementById("toast");
+    const toastMessage = document.getElementById("toastMessage");
+
+    const sostSelect = document.getElementById("sostSelect");
+    const hundredSelect = document.getElementById("hundredSelect");
+    const decimalModeSelect = document.getElementById("decimalModeSelect");
+    const chequeFractionSelect = document.getElementById("chequeFractionSelect");
+
+    const chequePreview = document.getElementById("chequePreview");
+    const chequeFigures = document.getElementById("chequeFigures");
+    const chequeWordsText = document.getElementById("chequeWordsText");
+    const chequeDate = document.getElementById("chequeDate");
+
+    const receiptPreview = document.getElementById("receiptPreview");
+    const receiptItemVal = document.getElementById("receiptItemVal");
+    const receiptTotalVal = document.getElementById("receiptTotalVal");
+    const receiptWordsText = document.getElementById("receiptWordsText");
+
+    // Translations Dictionary
+    const I18N = {
+      en: {
+        tagline: "Enterprise Amharic Number & Currency Engine",
+        playgroundTitle: "Live Converter Playground",
+        inputLabel: "Enter Numeric Amount or Value:",
+        presetsLabel: "Presets:",
+        modeETB: "ETB (Birr)",
+        modeCheque: "Cheque (ቼክ)",
+        modePlain: "Number (ቁጥር)",
+        modeReceipt: "Receipt (ደረሰኝ)",
+        modeInvoice: "Invoice (ድምር)",
+        resultLabel: "Amharic Words (በፊደል)",
+        copyText: "Copy",
+        copiedToast: "Amharic words copied to clipboard!",
+        optionsTitle: "Linguistic & Format Rules",
+        sostLabel: "Number 3 Spelling (የቁጥር 3 አጻጻፍ):",
+        hundredLabel: "100 Prefix (የ 100 አጻጻፍ):",
+        decimalModeLabel: "Decimal Interpretation (የነጥብ አቀራረብ):",
+        chequeFractionLabel: "Cheque Santim Format (የቼክ ሳንቲም):",
+        codeTitle: "Copy Code for your App",
+        guideHeading: "How to Use amharic-number-words in Your Project",
+        guideSub: "Install the zero-dependency npm package and integrate with pure TypeScript, Node.js, Next.js, or React.",
+        feat1Title: "Zero Dependencies",
+        feat1Desc: "Ultra lightweight runtime. Built on pure modern ECMAScript with tiny footprint.",
+        feat2Title: "Financial Precision",
+        feat2Desc: "Safe arbitrary-precision decimal decomposition. Zero floating-point rounding errors.",
+        feat3Title: "Banking & Cheque Ready",
+        feat3Desc: "Compliant with Ethiopian banking cheque fraud prevention rules and VAT invoice formats.",
+        feat4Title: "Strict TypeScript",
+        feat4Desc: "First-class type declarations, JSDoc comments, dual ESM and CommonJS bundle exports.",
+        invalidNumber: "Invalid numeric format (Please enter a valid number)",
+        enterNumber: "Please enter a number..."
+      },
+      am: {
+        tagline: "የኢትዮጵያ ቁጥር እና የገንዘብ መጠን ወደ ፊደል መቀየሪያ",
+        playgroundTitle: "የቁጥር እና የገንዘብ መጠን መሞከሪያ",
+        inputLabel: "የቁጥር ወይም የገንዘብ መጠን ያስገቡ፡",
+        presetsLabel: "ምሳሌዎች፡",
+        modeETB: "የኢትዮጵያ ብር",
+        modeCheque: "የባንክ ቼክ",
+        modePlain: "ቁጥር ብቻ",
+        modeReceipt: "የሽያጭ ደረሰኝ",
+        modeInvoice: "ጠቅላላ ድምር",
+        resultLabel: "በአማርኛ ፊደል (In Words)",
+        copyText: "ቅዳ",
+        copiedToast: "በአማርኛ ፊደል ተቀድቷል!",
+        optionsTitle: "የቋንቋ እና የቅርጸት ደንቦች",
+        sostLabel: "የቁጥር 3 አጻጻፍ፡",
+        hundredLabel: "የ 100 አጻጻፍ፡",
+        decimalModeLabel: "የነጥብ አቀራረብ፡",
+        chequeFractionLabel: "የቼክ ሳንቲም ቅርጸት፡",
+        codeTitle: "ለፕሮግራምዎ የሚሆን ኮድ ቅዱ",
+        guideHeading: "ይህን ፓኬጅ በፕሮጀክትዎ እንዴት እንደሚጠቀሙበት",
+        guideSub: "ይህን ፈጣን እና ደህንነቱ የተጠበቀ የ npm ፓኬጅ በ TypeScript፣ Node.js፣ React ወይም Next.js በቀላሉ ይጫኑ።",
+        feat1Title: "ምንም ተጨማሪ ጥገኝነት የለውም",
+        feat1Desc: "በቀጥታ በ ECMAScript የተገነባ፣ እጅግ ፈጣን እና ቀላል ክብደት ያለው።",
+        feat2Title: "የሂሳብ ስሌት ትክክለኛነት",
+        feat2Desc: "ትክክለኛ የሳንቲም እና የአስርዮሽ ስሌት ያለ ምንም መዛባት።",
+        feat3Title: "ለባንክ እና ለቼክ ዝግጁ",
+        feat3Desc: "በኢትዮጵያ ባንኮች የቼክ ህግጋት መሰረት ማጭበርበርን የሚከላከል አጻጻፍ።",
+        feat4Title: "ሙሉ TypeScript ድጋፍ",
+        feat4Desc: "ሙሉ በሙሉ በ TypeScript የተጻፈ ከ ESM እና CJS ዝግጁነት ጋር።",
+        invalidNumber: "የተሳሳተ የቁጥር ቅርጸት (እባክዎ ትክክለኛ ቁጥር ያስገቡ)",
+        enterNumber: "እባክዎ ቁጥር ያስገቡ..."
+      }
+    };
+
+    // Apply Theme
+    function applyTheme(theme) {
+      currentTheme = theme;
+      htmlElem.setAttribute("data-theme", theme);
+      themeIcon.textContent = theme === "dark" ? "☀️" : "🌙";
+      localStorage.setItem("demo_theme", theme);
+    }
+
+    // Apply Language
+    function applyLang(lang) {
+      currentLang = lang;
+      localStorage.setItem("demo_lang", lang);
+      langFlag.textContent = lang === "en" ? "🇪🇹" : "🇺🇸";
+      langLabel.textContent = lang === "en" ? "አማርኛ" : "English";
+
+      const dict = I18N[lang];
+      document.querySelectorAll("[data-i18n]").forEach((elem) => {
+        const key = elem.getAttribute("data-i18n");
+        if (dict[key]) {
+          elem.textContent = dict[key];
+        }
+      });
+      updateConversion();
+    }
+
+    // Show Toast
+    function showToast(msg) {
+      toastMessage.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2000);
+    }
+
+    // Number breakdown badges
+    function generateBreakdown(val, text) {
+      breakdownRow.innerHTML = "";
+      if (!text || outputCard.classList.contains("error")) return;
+
+      const words = text.split(" ");
+      
+      const countTag = document.createElement("span");
+      countTag.className = "breakdown-tag";
+      countTag.style.color = "var(--primary)";
+      countTag.textContent = `${words.length} ${currentLang === "en" ? "Words" : "ቃላት"}`;
+      breakdownRow.appendChild(countTag);
+
+      const lengthTag = document.createElement("span");
+      lengthTag.className = "breakdown-tag";
+      lengthTag.textContent = `${text.length} ${currentLang === "en" ? "Characters" : "ፊደላት"}`;
+      breakdownRow.appendChild(lengthTag);
+    }
+
+    // Update Live Code Generator
+    function updateCodeSnippet(val, options) {
+      const isCJS = currentCodeTab === "cjs";
+
+      let snippet = "";
+      if (isCJS) {
+        snippet += `const { ${currentMode === "cheque" ? "toChequeWords" : currentMode === "plain" ? "numberToAmharicWords" : "currencyToAmharicWords"} } = require("amharic-number-words");\n\n`;
+      } else {
+        snippet += `import { ${currentMode === "cheque" ? "toChequeWords" : currentMode === "plain" ? "numberToAmharicWords" : "currencyToAmharicWords"} } from "amharic-number-words";\n\n`;
+      }
+
+      if (currentMode === "cheque") {
+        snippet += `// Ethiopian Bank Cheque Writing\n`;
+        snippet += `const words = toChequeWords(${JSON.stringify(val)}, {\n`;
+        snippet += `  currency: "ETB",\n`;
+        if (options.minorFormat !== "words") snippet += `  minorFormat: "${options.minorFormat}",\n`;
+        if (options.sostSpelling !== "ሦስት") snippet += `  sostSpelling: "${options.sostSpelling}",\n`;
+        snippet += `});\nconsole.log(words);`;
+      } else if (currentMode === "plain") {
+        snippet += `// Plain Number-to-Words\n`;
+        snippet += `const words = numberToAmharicWords(${JSON.stringify(val)}, {\n`;
+        if (options.decimalMode !== "digits") snippet += `  decimalMode: "${options.decimalMode}",\n`;
+        if (options.leadingOneHundred !== true) snippet += `  leadingOneHundred: false,\n`;
+        snippet += `});\nconsole.log(words);`;
+      } else {
+        snippet += `// Financial Currency Conversion\n`;
+        snippet += `const words = currencyToAmharicWords(${JSON.stringify(val)}, {\n`;
+        snippet += `  currency: "${currentMode === "usd" ? "USD" : "ETB"}",\n`;
+        if (options.sostSpelling !== "ሦስት") snippet += `  sostSpelling: "${options.sostSpelling}",\n`;
+        snippet += `});\nconsole.log(words);`;
+      }
+
+      codeSnippet.textContent = snippet;
+    }
+
+    // Main Conversion Engine Runner
+    function updateConversion() {
+      const val = amountInput.value.trim();
+      const dict = I18N[currentLang];
 
       if (!val) {
-        resultOutput.textContent = "እባክዎ ቁጥር ያስገቡ...";
-        resultCard.classList.remove("error");
+        resultText.textContent = dict.enterNumber;
+        outputCard.classList.remove("error");
+        chequePreview.style.display = "none";
+        receiptPreview.style.display = "none";
+        breakdownRow.innerHTML = "";
         return;
       }
 
       if (!isSupportedNumber(val)) {
-        resultOutput.textContent = "የተሳሳተ የቁጥር ቅርጸት (Invalid number format)";
-        resultCard.classList.add("error");
+        resultText.textContent = dict.invalidNumber;
+        outputCard.classList.add("error");
+        chequePreview.style.display = "none";
+        receiptPreview.style.display = "none";
+        breakdownRow.innerHTML = "";
         return;
       }
 
-      resultCard.classList.remove("error");
+      outputCard.classList.remove("error");
 
       const options = {
         sostSpelling: sostSelect.value,
-        leadingOneHundred: leadingHundred.value === "true",
-        decimalMode: decimalMode.value,
+        leadingOneHundred: hundredSelect.value === "true",
+        decimalMode: decimalModeSelect.value,
+        minorFormat: chequeFractionSelect.value,
       };
 
       try {
@@ -351,62 +1337,112 @@
         switch (currentMode) {
           case "plain":
             text = numberToAmharicWords(val, options);
+            chequePreview.style.display = "none";
+            receiptPreview.style.display = "none";
             break;
           case "currency":
             text = currencyToAmharicWords(val, { ...options, currency: "ETB" });
+            chequePreview.style.display = "none";
+            receiptPreview.style.display = "none";
             break;
           case "cheque":
             text = toChequeWords(val, { ...options, currency: "ETB" });
+            chequePreview.style.display = "block";
+            receiptPreview.style.display = "none";
+            chequeFigures.textContent = `ETB ${val}`;
+            chequeWordsText.textContent = text;
             break;
           case "receipt":
             text = formatAmountInAmharic(val, { ...options, currency: "ETB", style: "receipt" });
+            chequePreview.style.display = "none";
+            receiptPreview.style.display = "block";
+            receiptItemVal.textContent = val;
+            receiptTotalVal.textContent = `ETB ${val}`;
+            receiptWordsText.textContent = text;
             break;
           case "invoice":
             text = formatAmountInAmharic(val, { ...options, currency: "ETB", style: "invoice" });
+            chequePreview.style.display = "none";
+            receiptPreview.style.display = "none";
             break;
           case "usd":
             text = currencyToAmharicWords(val, { ...options, currency: "USD" });
+            chequePreview.style.display = "none";
+            receiptPreview.style.display = "none";
             break;
         }
-        resultOutput.textContent = text;
+
+        resultText.textContent = text;
+        generateBreakdown(val, text);
+        updateCodeSnippet(val, options);
+
       } catch (err) {
-        resultOutput.textContent = err.message || "Error converting number";
-        resultCard.classList.add("error");
+        resultText.textContent = err.message || "Error";
+        outputCard.classList.add("error");
       }
     }
 
-    numInput.addEventListener("input", update);
-    sostSelect.addEventListener("change", update);
-    leadingHundred.addEventListener("change", update);
-    decimalMode.addEventListener("change", update);
+    // Event Listeners
+    amountInput.addEventListener("input", updateConversion);
+    sostSelect.addEventListener("change", updateConversion);
+    hundredSelect.addEventListener("change", updateConversion);
+    decimalModeSelect.addEventListener("change", updateConversion);
+    chequeFractionSelect.addEventListener("change", updateConversion);
 
-    document.querySelectorAll(".mode-btn").forEach((btn) => {
+    clearBtn.addEventListener("click", () => {
+      amountInput.value = "";
+      amountInput.focus();
+      updateConversion();
+    });
+
+    document.querySelectorAll(".mode-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".mode-tab").forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        currentMode = tab.dataset.mode;
+        updateConversion();
+      });
+    });
+
+    document.querySelectorAll(".preset-chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        amountInput.value = chip.dataset.val;
+        updateConversion();
+      });
+    });
+
+    document.querySelectorAll(".code-tab-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
-        document.querySelectorAll(".mode-btn").forEach((b) => b.classList.remove("active"));
+        document.querySelectorAll(".code-tab-btn").forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
-        currentMode = btn.dataset.mode;
-        update();
+        currentCodeTab = btn.dataset.tab;
+        updateConversion();
       });
     });
 
-    document.querySelectorAll(".preset-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        numInput.value = btn.dataset.val;
-        update();
+    copyResultBtn.addEventListener("click", () => {
+      const text = resultText.textContent;
+      if (!text || outputCard.classList.contains("error")) return;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(I18N[currentLang].copiedToast);
       });
     });
 
-    copyBtn.addEventListener("click", () => {
-      navigator.clipboard.writeText(resultOutput.textContent).then(() => {
-        copyBtn.textContent = "ተቀድቷል! (Copied!)";
-        setTimeout(() => {
-          copyBtn.textContent = "ቅዳ (Copy)";
-        }, 1500);
-      });
+    themeToggle.addEventListener("click", () => {
+      applyTheme(currentTheme === "dark" ? "light" : "dark");
     });
 
-    // Initial render
-    update();
+    langToggle.addEventListener("click", () => {
+      applyLang(currentLang === "en" ? "am" : "en");
+    });
+
+    // Date today for cheque
+    const today = new Date().toISOString().split("T")[0];
+    chequeDate.textContent = `DATE: ${today}`;
+
+    // Initialize
+    applyTheme(currentTheme);
+    applyLang(currentLang);
   </script>
 </body>
 </html>
