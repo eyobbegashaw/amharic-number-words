@@ -49,6 +49,7 @@
   ],
   "scripts": {
     "build": "tsup",
+    "build:public": "tsup src/index.ts --format esm --out-dir public --clean false",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
